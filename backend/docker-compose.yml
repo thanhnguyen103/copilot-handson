@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    container_name: backend-app
+    ports:
+      - "4000:4000"
+    # Use the appropriate env_file for the environment
+    # Uncomment the one you want to use, or override with docker-compose -f
+    # env_file:
+    #   - .env.development
+    # env_file:
+    #   - .env.staging
+    # env_file:
+    #   - .env.production
+    env_file:
+      - .env.development
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+    command: npm start
+    # For production, use Docker secrets for sensitive values:
+    # secrets:
+    #   - db_password
+    #   - jwt_secret
+# secrets:
+#   db_password:
+#     file: ./secrets/db_password.txt
+#   jwt_secret:
+#     file: ./secrets/jwt_secret.txt
