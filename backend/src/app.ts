@@ -1,9 +1,17 @@
+import cors from 'cors';
 import express from 'express';
+import { config } from './config/env';
 import { errorLogger, httpLogger, requestLogger } from './middleware/logging';
 import { metricsHandler, metricsMiddleware } from './middleware/metrics';
 import v1Routes from './routes/v1';
 
 const app = express();
+
+// CORS middleware
+app.use(cors({
+  origin: config.cors.origin,
+  credentials: true,
+}));
 
 // Logging middleware
 app.use(httpLogger);

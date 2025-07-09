@@ -23,4 +23,7 @@ export const config = {
     level: process.env.LOG_LEVEL || 'info', // Set log level (info, debug, warn, error)
     format: process.env.LOG_FORMAT || 'combined', // Log format (combined, common, dev, short, tiny)
   },
+  cors: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  },
 };

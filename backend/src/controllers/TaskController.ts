@@ -1,24 +1,12 @@
 import { Request, Response } from 'express';
-import { Pool } from 'pg';
 import { logger } from '../middleware/logging';
 import { TaskModel } from '../models/Task';
 import { TaskService } from '../services/TaskService';
 import { AuthenticatedRequest } from '../types/AuthenticatedRequest';
 import { DbLogger } from '../utils/dbLogger';
+import pool from '../config/db';
 
-const pool = new Pool();
-
-// Print out the connection string at startup (masking password for security)
-if (process.env.NODE_ENV === 'development') {
-  // You can use PG's connection parameters or environment variables
-  const { DB_HOST, DB_PORT, DB_PASSWORD, DB_NAME, DB_USER } = process.env;
-  const safePassword = DB_PASSWORD ? '*****' : undefined;
-  const connectionString = `postgresql://${DB_USER}:${safePassword}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
-  // Print to console for verification
-  // eslint-disable-next-line no-console
-  console.log('[DB] Using connection string:', connectionString);
-}
-
+// Use the shared pool from config/db
 const taskModel = new TaskModel(pool);
 const taskService = new TaskService(taskModel);
 
