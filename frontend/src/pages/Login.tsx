@@ -1,4 +1,3 @@
-import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -22,40 +21,65 @@ export default function Login() {
   };
 
   return (
-    <Box maxWidth={400} mx="auto" mt={8}>
-      <Typography variant="h4" mb={2}>
-        Login
-      </Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          disabled={loading}
-          sx={{ mt: 2 }}>
-          {loading ? 'Logging in...' : 'Login'}
-        </Button>
-      </form>
-    </Box>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
+        {error && (
+          <div className="mb-4 p-3 rounded bg-red-100 text-red-700 border border-red-300 text-sm">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError('');
+              }}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError('');
+              }}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-gray-900 font-semibold rounded hover:bg-blue-700 transition-colors disabled:opacity-60"
+            disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <div className="mt-4 text-center text-sm">
+          Don't have an account?{' '}
+          <a href="/register" className="text-blue-600 hover:underline">
+            Register
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

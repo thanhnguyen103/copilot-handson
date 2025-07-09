@@ -1,5 +1,5 @@
-import request from 'supertest';
 import { Pool } from 'pg';
+import request from 'supertest';
 import app from '../app';
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL });
@@ -41,7 +41,7 @@ describe('Task Management API', () => {
     const res = await request(app)
       .post('/api/v1/tasks')
       .set('Authorization', `Bearer ${authToken}`)
-      .send({ title: 'Integration Test Task', status: 'pending' });
+      .send({ title: 'Integration Test Task', status: 'incompleted' });
     expect(res.status).toBe(201);
     expect(res.body.data).toHaveProperty('id');
     taskId = res.body.data.id;

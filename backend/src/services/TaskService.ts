@@ -92,7 +92,7 @@ export class TaskService {
 
       // Set default status if not provided
       if (!task.status) {
-        task.status = 'pending';
+        task.status = 'incompleted';
         logger.debug('TaskService.createTask: Set default status to pending');
       }
 
@@ -179,6 +179,6 @@ export class TaskService {
   // Example: Get overdue tasks
   async getOverdueTasks(user_id: number): Promise<Task[]> {
     const now = new Date();
-    return this.taskModel.findAll({ user_id, due_before: now, status: 'pending' });
+    return this.taskModel.findAll({ user_id, due_before: now, status: 'incompleted' });
   }
 }

@@ -27,6 +27,15 @@ app.use(metricsMiddleware);
 // Global middleware
 app.use(express.json());
 
+// Disable caching for all API responses
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  next();
+});
+
 // Health check endpoint
 app.get('/healthz', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });

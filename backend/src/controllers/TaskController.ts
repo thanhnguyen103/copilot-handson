@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
+import pool from '../config/db';
 import { logger } from '../middleware/logging';
 import { TaskModel } from '../models/Task';
 import { TaskService } from '../services/TaskService';
 import { AuthenticatedRequest } from '../types/AuthenticatedRequest';
 import { DbLogger } from '../utils/dbLogger';
-import pool from '../config/db';
 
 // Use the shared pool from config/db
 const taskModel = new TaskModel(pool);
@@ -21,10 +21,10 @@ if (process.env.NODE_ENV === 'development') {
 export class TaskController {
   static async getTasks(req: AuthenticatedRequest, res: Response) {
     try {
-      const user_id = req.user?.id || req.query.user_id; // Adjust for your auth middleware
+      const user_id = req.user?.id || req.query.user_id;
       const filter = { ...req.query, user_id: Number(user_id) };
       const tasks = await taskService.getTasks(filter);
-      res.json({ success: true, data: tasks });
+      res.json(tasks); // <-- Return data directly, not wrapped
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -35,7 +35,7 @@ export class TaskController {
       const id = Number(req.params.id);
       const task = await taskService.getTaskById(id);
       if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
-      res.json({ success: true, data: task });
+      res.json(task); // <-- Return data directly, not wrapped
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -43,7 +43,7 @@ export class TaskController {
 
   static async createTask(req: AuthenticatedRequest, res: Response) {
     const requestId = Math.random().toString(36).substring(7);
-    
+
     logger.info('TaskController.createTask: Received task creation request', {
       requestId,
       method: 'POST',
@@ -58,9 +58,7 @@ export class TaskController {
     });
 
     try {
-      // Extract user ID from authenticated request
       const user_id = req.user?.id;
-      
       if (!user_id) {
         logger.error('TaskController.createTask: No user ID found in request', {
           requestId,
@@ -69,8 +67,8 @@ export class TaskController {
             authorization: req.get('Authorization') ? 'Bearer [REDACTED]' : 'Not present'
           }
         });
-        return res.status(401).json({ 
-          success: false, 
+        return res.status(401).json({
+          success: false,
           error: 'User authentication required',
           requestId
         });
@@ -82,9 +80,8 @@ export class TaskController {
         requestBody: req.body
       });
 
-      // Prepare task data
-      const taskData = { 
-        ...req.body, 
+      const taskData = {
+        ...req.body,
         user_id: Number(user_id),
         status: req.body.status || 'pending'
       };
@@ -100,9 +97,8 @@ export class TaskController {
         }
       });
 
-      // Call service to create task
       const task = await taskService.createTask(taskData);
-      
+
       logger.info('TaskController.createTask: Task created successfully', {
         requestId,
         taskId: task.id,
@@ -111,11 +107,7 @@ export class TaskController {
         status: task.status
       });
 
-      res.status(201).json({ 
-        success: true, 
-        data: task,
-        requestId
-      });
+      res.status(201).json(task); // <-- Return data directly, not wrapped
     } catch (err: any) {
       logger.error('TaskController.createTask: Error during task creation', {
         requestId,
@@ -131,20 +123,19 @@ export class TaskController {
         body: req.body
       });
 
-      // Determine appropriate status code based on error type
       let statusCode = 400;
       if (err.message.includes('Validation failed')) {
-        statusCode = 422; // Unprocessable Entity
-      } else if (err.code === '23505') { // PostgreSQL unique violation
-        statusCode = 409; // Conflict
-      } else if (err.code === '23503') { // PostgreSQL foreign key violation
-        statusCode = 400; // Bad Request
-      } else if (err.code === '23502') { // PostgreSQL not null violation
-        statusCode = 400; // Bad Request
+        statusCode = 422;
+      } else if (err.code === '23505') {
+        statusCode = 409;
+      } else if (err.code === '23503') {
+        statusCode = 400;
+      } else if (err.code === '23502') {
+        statusCode = 400;
       }
 
-      res.status(statusCode).json({ 
-        success: false, 
+      res.status(statusCode).json({
+        success: false,
         error: err.message,
         requestId,
         errorCode: err.code || 'UNKNOWN_ERROR'
@@ -158,7 +149,7 @@ export class TaskController {
       const updates = req.body;
       const task = await taskService.updateTask(id, updates);
       if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
-      res.json({ success: true, data: task });
+      res.json(task); // <-- Return data directly, not wrapped
     } catch (err: any) {
       res.status(400).json({ success: false, error: err.message });
     }
@@ -180,7 +171,7 @@ export class TaskController {
       const id = Number(req.params.id);
       const task = await taskService.markTaskCompleted(id);
       if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
-      res.json({ success: true, data: task });
+      res.json(task); // <-- Return data directly, not wrapped
     } catch (err: any) {
       res.status(400).json({ success: false, error: err.message });
     }
@@ -189,9 +180,9 @@ export class TaskController {
   static async markTaskIncomplete(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const task = await taskService.updateTask(id, { status: 'pending' });
+      const task = await taskService.updateTask(id, { status: 'incompleted' });
       if (!task) return res.status(404).json({ success: false, error: 'Task not found' });
-      res.json({ success: true, data: task });
+      res.json(task); // <-- Return data directly, not wrapped
     } catch (err: any) {
       res.status(400).json({ success: false, error: err.message });
     }

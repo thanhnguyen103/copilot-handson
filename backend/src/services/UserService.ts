@@ -1,7 +1,8 @@
-import { User, UserSchema } from '../models/User';
-import { UserRepository } from '../repository/UserRepository';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { User, UserSchema } from '../models/User';
+import { CategoryRepository } from '../repository/CategoryRepository';
+import { UserRepository } from '../repository/UserRepository';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'changeme';
 
@@ -14,7 +15,13 @@ export class UserService {
     // Check for existing email
     const existing = await UserRepository.findByEmail(user.email);
     if (existing) throw new Error('Email already registered');
-    return UserRepository.create(user) as Promise<User>;
+    const createdUser = (await UserRepository.create(user)) as User;
+    // Seed 'Uncategorized' category for the new user
+    if (typeof createdUser.id !== 'number') {
+      throw new Error('User ID is missing after creation');
+    }
+    await CategoryRepository.createUncategorizedForUser(createdUser.id);
+    return createdUser;
   }
 
   // Authentication (login)

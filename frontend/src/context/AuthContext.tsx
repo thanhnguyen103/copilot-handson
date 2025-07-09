@@ -64,11 +64,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     setLoading(true);
-    const res = await api.post('/auth/login', { email, password });
-    setToken(res.data.token);
-    setUser(res.data.user);
-    localStorage.setItem('token', res.data.token);
-    setLoading(false);
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      setToken(res.data.token);
+      setUser(res.data.user);
+      localStorage.setItem('token', res.data.token);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false); // <-- Ensure loading is reset on error
+      throw err;
+    }
   };
 
   const register = async (
@@ -96,8 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

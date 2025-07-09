@@ -17,7 +17,7 @@ describe('TaskService', () => {
   });
 
   it('should validate and create a task', async () => {
-    const taskData = { title: 'Test', user_id: 1, status: 'pending' };
+    const taskData = { title: 'Test', user_id: 1, status: 'incompleted'  };
     mockTaskModel.create.mockResolvedValue({ ...taskData, id: 1, created_at: new Date(), updated_at: new Date() });
     const result = await service.createTask(taskData as any);
     expect(result.title).toBe('Test');
@@ -25,22 +25,22 @@ describe('TaskService', () => {
   });
 
   it('should throw on invalid title', async () => {
-    await expect(service.createTask({ title: '', user_id: 1, status: 'pending' } as any)).rejects.toThrow('Title is required.');
+    await expect(service.createTask({ title: '', user_id: 1, status: 'incompleted'  } as any)).rejects.toThrow('Title is required.');
   });
 
   it('should throw on invalid due date', async () => {
-    await expect(service.createTask({ title: 'A', user_id: 1, status: 'pending', due_date: 'bad-date' } as any)).rejects.toThrow('Due date is invalid.');
+    await expect(service.createTask({ title: 'A', user_id: 1, status: 'incompleted' , due_date: 'bad-date' } as any)).rejects.toThrow('Due date is invalid.');
   });
 
   it('should get a task by id', async () => {
-    mockTaskModel.findById.mockResolvedValue({ id: 1, title: 'T', user_id: 1, status: 'pending', created_at: new Date(), updated_at: new Date() });
+    mockTaskModel.findById.mockResolvedValue({ id: 1, title: 'T', user_id: 1, status: 'incompleted' , created_at: new Date(), updated_at: new Date() });
     const result = await service.getTaskById(1);
     expect(result).toBeTruthy();
     expect(mockTaskModel.findById).toHaveBeenCalledWith(1);
   });
 
   it('should update a task', async () => {
-    mockTaskModel.update.mockResolvedValue({ id: 1, title: 'U', user_id: 1, status: 'pending', created_at: new Date(), updated_at: new Date() });
+    mockTaskModel.update.mockResolvedValue({ id: 1, title: 'U', user_id: 1, status: 'incompleted' , created_at: new Date(), updated_at: new Date() });
     const result = await service.updateTask(1, { title: 'U' });
     expect(result?.title).toBe('U');
   });
@@ -56,7 +56,7 @@ describe('TaskService', () => {
   });
 
   it('should get tasks with filter', async () => {
-    mockTaskModel.findAll.mockResolvedValue([{ id: 1, title: 'T', user_id: 1, status: 'pending', created_at: new Date(), updated_at: new Date() }]);
+    mockTaskModel.findAll.mockResolvedValue([{ id: 1, title: 'T', user_id: 1, status: 'incompleted' , created_at: new Date(), updated_at: new Date() }]);
     const result = await service.getTasks({ user_id: 1 });
     expect(result.length).toBe(1);
   });

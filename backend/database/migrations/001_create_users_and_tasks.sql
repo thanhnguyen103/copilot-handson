@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     title VARCHAR(100) NOT NULL,
     description TEXT,
     due_date DATE,
-    completed BOOLEAN DEFAULT FALSE,
+    status VARCHAR(20) DEFAULT 'pending',
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     category_id INTEGER,
     priority_id INTEGER,
@@ -28,4 +28,4 @@ CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_category_id ON tasks(category_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_priority_id ON tasks(priority_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);
-CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
