@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { logger } from '../middleware/logging';
 
 export interface Task {
   id: number;
@@ -27,13 +28,64 @@ export class TaskModel {
   }
 
   async create(task: Omit<Task, 'id' | 'created_at' | 'updated_at'>): Promise<Task> {
-    const result = await this.pool.query(
-      `INSERT INTO tasks (title, description, status, due_date, user_id)
+    logger.info('TaskModel.create: Starting task creation', {
+      method: 'create',
+      input: {
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        due_date: task.due_date,
+        user_id: task.user_id
+      }
+    });
+
+    try {
+      const query = `INSERT INTO tasks (title, description, status, due_date, user_id)
        VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
-      [task.title, task.description, task.status, task.due_date, task.user_id]
-    );
-    return result.rows[0];
+       RETURNING *`;
+      
+      const params = [task.title, task.description, task.status, task.due_date, task.user_id];
+      
+      logger.debug('TaskModel.create: Executing SQL query', {
+        query,
+        params: params.map((p, i) => ({ [`$${i + 1}`]: p }))
+      });
+
+      const result = await this.pool.query(query, params);
+      
+      logger.info('TaskModel.create: Task created successfully', {
+        taskId: result.rows[0]?.id,
+        rowCount: result.rowCount
+      });
+
+      return result.rows[0];
+    } catch (error: any) {
+      logger.error('TaskModel.create: Database error during task creation', {
+        error: {
+          message: error.message,
+          code: error.code,
+          detail: error.detail,
+          hint: error.hint,
+          position: error.position,
+          internalPosition: error.internalPosition,
+          internalQuery: error.internalQuery,
+          where: error.where,
+          schema: error.schema,
+          table: error.table,
+          column: error.column,
+          dataType: error.dataType,
+          constraint: error.constraint
+        },
+        input: {
+          title: task.title,
+          description: task.description,
+          status: task.status,
+          due_date: task.due_date,
+          user_id: task.user_id
+        }
+      });
+      throw error;
+    }
   }
 
   async findById(id: number): Promise<Task | null> {

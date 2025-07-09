@@ -1,12 +1,17 @@
 import express from 'express';
+import { errorLogger, httpLogger, requestLogger } from './middleware/logging';
+import { metricsHandler, metricsMiddleware } from './middleware/metrics';
 import v1Routes from './routes/v1';
-import { httpLogger, errorLogger } from './middleware/logging';
-import { metricsMiddleware, metricsHandler } from './middleware/metrics';
 
 const app = express();
 
 // Logging middleware
 app.use(httpLogger);
+
+// Request debugging middleware (for development)
+if (process.env.NODE_ENV === 'development') {
+  app.use(requestLogger);
+}
 
 // Metrics middleware
 app.use(metricsMiddleware);

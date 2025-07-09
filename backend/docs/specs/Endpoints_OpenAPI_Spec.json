@@ -6,7 +6,7 @@
     "description": "OpenAPI 3.0 specification for a task management system with authentication, task CRUD, user management, and error handling."
   },
   "servers": [
-    { "url": "/api" }
+    { "url": "/api/v1" }
   ],
   "components": {
     "securitySchemes": {

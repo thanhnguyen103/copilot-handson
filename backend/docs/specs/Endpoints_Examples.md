@@ -1,13 +1,17 @@
-# Example HTTP Requests and Responses for Task Management API
+\*# Example HTTP Requests and Responses for Task Management API
 
 ## Register a New User
+
 **Request:**
+
 ```bash
-curl -X POST /api/auth/register \
+curl -X POST http://localhost:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username": "alice", "email": "alice@example.com", "password": "secret123"}'
 ```
+
 **Response:**
+
 ```json
 {
   "id": 1,
@@ -18,13 +22,17 @@ curl -X POST /api/auth/register \
 ```
 
 ## Login
+
 **Request:**
+
 ```bash
-curl -X POST /api/auth/login \
+curl -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "alice@example.com", "password": "secret123"}'
 ```
+
 **Response:**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
@@ -38,14 +46,18 @@ curl -X POST /api/auth/login \
 ```
 
 ## Create a Task
+
 **Request:**
+
 ```bash
-curl -X POST /api/tasks \
+curl -X POST http://localhost:3000/api/v1/tasks \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"title": "Finish report", "description": "Complete the Q2 report", "priority": "high", "category": "Work", "due_date": "2025-07-15"}'
 ```
+
 **Response:**
+
 ```json
 {
   "id": 10,
@@ -61,14 +73,18 @@ curl -X POST /api/tasks \
 ```
 
 ## Update a Task
+
 **Request:**
+
 ```bash
-curl -X PUT /api/tasks/10 \
+curl -X PUT http://localhost:3000/api/v1/tasks/10 \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"title": "Finish report (updated)", "completed": true}'
 ```
+
 **Response:**
+
 ```json
 {
   "id": 10,
@@ -84,13 +100,17 @@ curl -X PUT /api/tasks/10 \
 ```
 
 ## Error: Invalid Login
+
 **Request:**
+
 ```bash
-curl -X POST /api/auth/login \
+curl -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "alice@example.com", "password": "wrongpass"}'
 ```
+
 **Response:**
+
 ```json
 {
   "message": "Invalid email or password.",
@@ -99,13 +119,17 @@ curl -X POST /api/auth/login \
 ```
 
 ## Error: Unauthorized Task Creation
+
 **Request:**
+
 ```bash
-curl -X POST /api/tasks \
+curl -X POST http://localhost:3000/api/v1/tasks \
   -H "Content-Type: application/json" \
   -d '{"title": "Unauthorized task"}'
 ```
+
 **Response:**
+
 ```json
 {
   "message": "Authentication required.",
@@ -114,12 +138,16 @@ curl -X POST /api/tasks \
 ```
 
 ## Error: Task Not Found
+
 **Request:**
+
 ```bash
-curl -X GET /api/tasks/999 \
+curl -X GET http://localhost:3000/api/v1/tasks/999 \
   -H "Authorization: Bearer <token>"
 ```
+
 **Response:**
+
 ```json
 {
   "message": "Task not found.",

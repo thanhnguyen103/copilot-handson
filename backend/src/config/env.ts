@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-  port: process.env.PORT || 4000,
+  port: process.env.PORT || 3000,
   nodeEnv: process.env.NODE_ENV || 'development',
   db: {
     host: process.env.DB_HOST || 'localhost',
@@ -17,5 +17,10 @@ export const config = {
   },
   session: {
     expiresIn: Number(process.env.SESSION_EXPIRES_IN) || 3600,
+  },
+  debug: true, // Enable debug mode for development
+  logging: {
+    level: process.env.LOG_LEVEL || 'info', // Set log level (info, debug, warn, error)
+    format: process.env.LOG_FORMAT || 'combined', // Log format (combined, common, dev, short, tiny)
   },
 };
